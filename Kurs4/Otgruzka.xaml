@@ -1,0 +1,356 @@
+﻿<Window x:Class="Kurs4.Otgruzka"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Отгрузка товаров со склада" 
+        Height="650" Width="1000"
+        WindowStartupLocation="CenterOwner"
+        Background="#F5F7FA"
+        WindowStyle="SingleBorderWindow"
+        ResizeMode="CanResize">
+
+    <Window.Resources>
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Padding" Value="15,0"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="5"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.8" TargetName="border"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="RenderTransform" TargetName="border">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="0.98" ScaleY="0.98"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="InputFieldStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderBrush" Value="#D0D7E2"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+
+        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderBrush" Value="#D0D7E2"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+
+        <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+
+        <Style x:Key="DataGridStyle" TargetType="DataGrid">
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="BorderBrush" Value="#D0D7E2"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="RowBackground" Value="White"/>
+            <Setter Property="AlternatingRowBackground" Value="#F9FAFC"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="Оформление отгрузки товаров" 
+                       FontSize="28" 
+                       FontWeight="Light" 
+                       Foreground="#2C3E50"/>
+            <TextBlock Text="Заполните информацию об отгрузке" 
+                       FontSize="14" 
+                       Foreground="#7F8C8D" 
+                       Margin="0,5,0,0"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" 
+                Background="White" 
+                CornerRadius="10" 
+                Padding="20" 
+                Margin="0,0,0,20"
+                BorderBrush="#D0D7E2" 
+                BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,15,15">
+                    <TextBlock Text="Номер документа" 
+                               FontWeight="SemiBold" 
+                               Foreground="#34495E" 
+                               Margin="0,0,0,5"/>
+                    <TextBox Style="{StaticResource InputFieldStyle}" 
+                             Text="ОТГ-2026-001"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="15,0,15,15">
+                    <TextBlock Text="Дата отгрузки" 
+                               FontWeight="SemiBold" 
+                               Foreground="#34495E" 
+                               Margin="0,0,0,5"/>
+                    <TextBox Style="{StaticResource InputFieldStyle}" 
+                             Text="25.02.2026"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" Grid.Column="2" Margin="15,0,0,15">
+                    <TextBlock Text="Статус" 
+                               FontWeight="SemiBold" 
+                               Foreground="#34495E" 
+                               Margin="0,0,0,5"/>
+                    <ComboBox Style="{StaticResource ComboBoxStyle}" 
+                              SelectedIndex="0">
+                        <ComboBoxItem Content="Принят"/>
+                        <ComboBoxItem Content="В обработке"/>
+                        <ComboBoxItem Content="Готов к отгрузке"/>
+                        <ComboBoxItem Content="Отгружен"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,15,15">
+                    <TextBlock Text="Получатель" 
+                               FontWeight="SemiBold" 
+                               Foreground="#34495E" 
+                               Margin="0,0,0,5"/>
+                    <ComboBox Style="{StaticResource ComboBoxStyle}" 
+                              IsEditable="True"
+                              Text="ООО 'Ромашка'">
+                        <ComboBoxItem Content="ООО 'Ромашка'"/>
+                        <ComboBoxItem Content="ИП Петров А.В."/>
+                        <ComboBoxItem Content="АО 'СкладСервис'"/>
+                        <ComboBoxItem Content="ООО 'Торговый Дом'"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="1" Margin="15,0,15,15">
+                    <TextBlock Text="Блок отгрузки" 
+                               FontWeight="SemiBold" 
+                               Foreground="#34495E" 
+                               Margin="0,0,0,5"/>
+                    <ComboBox Style="{StaticResource ComboBoxStyle}" 
+                              SelectedIndex="0">
+                        <ComboBoxItem Content="Основной блок склада"/>
+                        <ComboBoxItem Content="Резервный блок склад"/>
+                        
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="2" Margin="15,0,0,15">
+                    <TextBlock Text="Тип отгрузки" 
+                               FontWeight="SemiBold" 
+                               Foreground="#34495E" 
+                               Margin="0,0,0,5"/>
+                    <ComboBox Style="{StaticResource ComboBoxStyle}" 
+                              SelectedIndex="0">
+                        <ComboBoxItem Content="Продажа"/>
+                        <ComboBoxItem Content="Перемещение"/>
+                        <ComboBoxItem Content="Списание"/>
+                        <ComboBoxItem Content="Возврат поставщику"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,0">
+                    <TextBlock Text="Примечание" 
+                               FontWeight="SemiBold" 
+                               Foreground="#34495E" 
+                               Margin="0,0,0,5"/>
+                    <TextBox Style="{StaticResource InputFieldStyle}" 
+                             Height="60"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             Text="Срочная отгрузка, подготовить документы"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="2" Margin="0,0,0,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" 
+                       Text="Товары к отгрузке" 
+                       Style="{StaticResource SectionHeaderStyle}"/>
+
+            <DataGrid Grid.Row="1" 
+                      Style="{StaticResource DataGridStyle}"
+                      Margin="0,0,0,10"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="№" Width="50"/>
+                    <DataGridTextColumn Header="Артикул" Width="120"/>
+                    <DataGridTextColumn Header="Наименование товара" Width="*"/>
+                    <DataGridTextColumn Header="Количество" Width="100"/>
+                    <DataGridTextColumn Header="Ед. изм." Width="80"/>
+                    <DataGridTextColumn Header="Цена" Width="100"/>
+                    <DataGridTextColumn Header="Сумма" Width="100"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Border Grid.Row="2" 
+                    Background="#F0F3F8" 
+                    CornerRadius="5" 
+                    Padding="15">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <ComboBox Width="200" 
+                                  Style="{StaticResource ComboBoxStyle}" 
+                                  Margin="0,0,10,0"
+                                  IsEditable="True"
+                                  Text="Выберите товар">
+                            <ComboBoxItem Content="Ноутбук Dell XPS 13"/>
+                            <ComboBoxItem Content="Монитор Samsung 27"/>
+                            <ComboBoxItem Content="Клавиатура Logitech"/>
+                            <ComboBoxItem Content="Мышь беспроводная"/>
+                        </ComboBox>
+                        <TextBox Width="100" 
+                                 Style="{StaticResource InputFieldStyle}" 
+                                 Text="1" 
+                                 Margin="0,0,10,0"/>
+                        <ComboBox Width="80" 
+                                  Style="{StaticResource ComboBoxStyle}" 
+                                  SelectedIndex="0">
+                            <ComboBoxItem Content="шт"/>
+                            <ComboBoxItem Content="кг"/>
+                            <ComboBoxItem Content="уп"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Content="Добавить товар" 
+                                Style="{StaticResource ActionButtonStyle}"
+                                Background="#27AE60"
+                                Width="150"
+                                Margin="0,0,10,0"/>
+                        <Button Content="Очистить" 
+                                Style="{StaticResource ActionButtonStyle}"
+                                Background="#95A5A6"
+                                Width="100"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="3" 
+                Background="White" 
+                CornerRadius="10" 
+                Padding="20"
+                BorderBrush="#D0D7E2" 
+                BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="Всего позиций:" 
+                               FontSize="14" 
+                               Foreground="#7F8C8D" 
+                               Margin="0,0,10,0"
+                               VerticalAlignment="Center"/>
+                    <TextBlock Text="4" 
+                               FontSize="16" 
+                               FontWeight="Bold" 
+                               Foreground="#2C3E50" 
+                               Margin="0,0,20,0"
+                               VerticalAlignment="Center"/>
+
+                    <TextBlock Text="Общее количество:" 
+                               FontSize="14" 
+                               Foreground="#7F8C8D" 
+                               Margin="0,0,10,0"
+                               VerticalAlignment="Center"/>
+                    <TextBlock Text="12 шт" 
+                               FontSize="16" 
+                               FontWeight="Bold" 
+                               Foreground="#2C3E50" 
+                               Margin="0,0,10,0"
+                               VerticalAlignment="Center"/>
+
+                    <TextBlock Text="Общая сумма:" 
+                               FontSize="14" 
+                               Foreground="#7F8C8D" 
+                               Margin="0,0,1,0"
+                               VerticalAlignment="Center"/>
+                    <TextBlock Text="245 890 ₽" 
+                               FontSize="13" 
+                               FontWeight="Bold" 
+                               Foreground="#27AE60"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Провести отгрузку" 
+                            Style="{StaticResource ActionButtonStyle}"
+                            Background="#3498DB"
+                            Width="160"
+                            Margin="0,0,10,0"/>
+                    <Button Content="Сохранить черновик" 
+                            Style="{StaticResource ActionButtonStyle}"
+                            Background="#F39C12"
+                            Width="160"
+                            Margin="0,0,10,0"/>
+                    <Button Content="Отмена" 
+                            Style="{StaticResource ActionButtonStyle}"
+                            Background="#E74C3C"
+                            Width="100"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
