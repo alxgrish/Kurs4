@@ -1,0 +1,577 @@
+{
+  "dns": {
+    "servers": [
+      "tcp://1.1.1.1:53",
+      "tcp://8.8.8.8:53",
+      {
+        "address": "tcp://77.88.8.8:53",
+        "domains": [
+          "geosite:private",
+          "geosite:category-ru"
+        ]
+      }
+    ],
+    "queryStrategy": "UseIPv4"
+  },
+  "log": {
+    "loglevel": "warning"
+  },
+  "stats": {},
+  "policy": {
+    "system": {
+      "statsOutboundUplink": true,
+      "statsOutboundDownlink": true
+    }
+  },
+  "routing": {
+    "rules": [
+      {
+        "port": "443",
+        "network": "udp",
+        "outboundTag": "block"
+      },
+      {
+        "inboundTag": [
+          "VK-REROUTE"
+        ],
+        "balancerTag": "vk-balancer"
+      },
+      {
+        "ip": [
+          "1.1.1.1",
+          "8.8.8.8"
+        ],
+        "port": 53,
+        "network": "tcp",
+        "balancerTag": "main-balancer"
+      },
+      {
+        "ip": [
+          "77.88.8.8"
+        ],
+        "port": 53,
+        "network": "tcp",
+        "balancerTag": "direct-balancer"
+      },
+      {
+        "ip": [
+          "37.139.34.176"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "domain": [
+          "ads.x5.ru"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "domain": [
+          "geosite:category-ru",
+          "wata",
+          "2ip.io",
+          "yookassa",
+          "yoomoney"
+        ],
+        "balancerTag": "direct-balancer"
+      },
+      {
+        "domain": [
+          "geosite:youtube",
+          "full:www.google.com"
+        ],
+        "balancerTag": "russia-balancer"
+      },
+      {
+        "domain": [
+          "geosite:private"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "ip": [
+          "geoip:ru"
+        ],
+        "balancerTag": "direct-balancer"
+      },
+      {
+        "domain": [
+          "habr.com",
+          "4pda",
+          "kemono.su",
+          "jut.su",
+          "kara.su",
+          "theins.ru",
+          "tvrain.ru",
+          "echo.msk.ru",
+          "the-village.ru",
+          "snob.ru",
+          "novayagazeta.ru",
+          "moscowtimes.ru",
+          "full:yandex.ru"
+        ],
+        "balancerTag": "main-balancer"
+      },
+      {
+        "ip": [
+          "geoip:private"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "network": "tcp,udp",
+        "balancerTag": "main-balancer"
+      }
+    ],
+    "balancers": [
+      {
+        "tag": "russia-balancer",
+        "selector": [
+          "russia"
+        ],
+        "strategy": {
+          "type": "leastLoad",
+          "settings": {
+            "expected": 1
+          }
+        },
+        "fallbackTag": "LOOP-VK"
+      },
+      {
+        "tag": "main-balancer",
+        "selector": [
+          "norway"
+        ],
+        "strategy": {
+          "type": "leastLoad",
+          "settings": {
+            "expected": 1
+          }
+        },
+        "fallbackTag": "LOOP-VK"
+      },
+      {
+        "tag": "vk-balancer",
+        "selector": [
+          "wlvk"
+        ],
+        "strategy": {
+          "type": "leastLoad",
+          "settings": {
+            "expected": 1
+          }
+        },
+        "fallbackTag": "direct"
+      },
+      {
+        "tag": "direct-balancer",
+        "selector": [
+          "direct"
+        ],
+        "strategy": {
+          "type": "leastLoad",
+          "settings": {
+            "expected": 1
+          }
+        },
+        "fallbackTag": "LOOP-VK"
+      }
+    ],
+    "domainStrategy": "IPIfNonMatch"
+  },
+  "inbounds": [
+    {
+      "tag": "socks",
+      "port": 10808,
+      "protocol": "socks",
+      "settings": {
+        "udp": true,
+        "auth": "noauth",
+        "userLevel": 8
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls",
+          "fakedns"
+        ]
+      }
+    },
+    {
+      "tag": "http",
+      "port": 10809,
+      "protocol": "http",
+      "settings": {
+        "userLevel": 8
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "norway",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "144.31.130.197",
+            "port": 443,
+            "users": [
+              {
+                "id": "3ef61b7f-f5f5-4774-9759-aff86b88eeb9",
+                "encryption": "none",
+                "flow": ""
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "tcpSettings": {},
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "layerzro.ru",
+          "publicKey": "cbYXTGB1cWP29JuV8chwF7O0ZqbyUqjmu7CUHCaHRzY",
+          "shortId": "fff8",
+          "fingerprint": "edge"
+        },
+        "sockopt": {
+          "mark": 0,
+          "V6Only": false,
+          "tproxy": "off",
+          "tcpMptcp": false,
+          "interface": "wg0",
+          "tcpMaxSeg": 1440,
+          "tcpNoDelay": true,
+          "dialerProxy": "",
+          "tcpFastOpen": true,
+          "happyEyeballs": {},
+          "tcpcongestion": "bbr",
+          "domainStrategy": "AsIs",
+          "tcpUserTimeout": 15000,
+          "tcpWindowClamp": 0,
+          "tcpKeepAliveIdle": 120,
+          "acceptProxyProtocol": false,
+          "tcpKeepAliveInterval": 30
+        }
+      },
+      "mux": {
+        "enabled": true,
+        "concurrency": 4,
+        "xudpConcurrency": 4,
+        "xudpProxyUDP443": "reject"
+      }
+    },
+    {
+      "tag": "russia",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "85.239.49.59",
+            "port": 443,
+            "users": [
+              {
+                "id": "3ef61b7f-f5f5-4774-9759-aff86b88eeb9",
+                "encryption": "none",
+                "flow": ""
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "tcpSettings": {},
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "layerzro.ru",
+          "publicKey": "Mkxs9LT0tRg208EbLXmP-_dQYlsPOgaTwZ3acwgVVWs",
+          "fingerprint": "chrome"
+        }
+      },
+      "mux": {
+        "enabled": true,
+        "concurrency": 4,
+        "xudpConcurrency": 4,
+        "xudpProxyUDP443": "reject"
+      }
+    },
+    {
+      "tag": "russia-2",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "5.42.111.44",
+            "port": 443,
+            "users": [
+              {
+                "id": "3ef61b7f-f5f5-4774-9759-aff86b88eeb9",
+                "encryption": "none",
+                "flow": ""
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "tcpSettings": {},
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "layerzro.ru",
+          "publicKey": "Mkxs9LT0tRg208EbLXmP-_dQYlsPOgaTwZ3acwgVVWs",
+          "fingerprint": "chrome"
+        }
+      },
+      "mux": {
+        "enabled": true,
+        "concurrency": 4,
+        "xudpConcurrency": 4,
+        "xudpProxyUDP443": "reject"
+      }
+    },
+    {
+      "tag": "russia-3",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.10.41.112",
+            "port": 443,
+            "users": [
+              {
+                "id": "3ef61b7f-f5f5-4774-9759-aff86b88eeb9",
+                "encryption": "none",
+                "flow": ""
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "tcpSettings": {},
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "layerzro.ru",
+          "publicKey": "Mkxs9LT0tRg208EbLXmP-_dQYlsPOgaTwZ3acwgVVWs",
+          "fingerprint": "chrome"
+        }
+      },
+      "mux": {
+        "enabled": true,
+        "concurrency": 4,
+        "xudpConcurrency": 4,
+        "xudpProxyUDP443": "reject"
+      }
+    },
+    {
+      "tag": "russia-4",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "72.56.247.67",
+            "port": 443,
+            "users": [
+              {
+                "id": "3ef61b7f-f5f5-4774-9759-aff86b88eeb9",
+                "encryption": "none",
+                "flow": ""
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "tcpSettings": {},
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "layerzro.ru",
+          "publicKey": "Mkxs9LT0tRg208EbLXmP-_dQYlsPOgaTwZ3acwgVVWs",
+          "fingerprint": "chrome"
+        }
+      },
+      "mux": {
+        "enabled": true,
+        "concurrency": 4,
+        "xudpConcurrency": 4,
+        "xudpProxyUDP443": "reject"
+      }
+    },
+    {
+      "tag": "russia-5",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "217.149.30.253",
+            "port": 443,
+            "users": [
+              {
+                "id": "3ef61b7f-f5f5-4774-9759-aff86b88eeb9",
+                "encryption": "none",
+                "flow": "xtls-rprx-vision"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "tcpSettings": {},
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "layerzro.ru",
+          "publicKey": "Mkxs9LT0tRg208EbLXmP-_dQYlsPOgaTwZ3acwgVVWs",
+          "fingerprint": "chrome"
+        }
+      }
+    },
+    {
+      "tag": "wlvk-7",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "89.208.229.238",
+            "port": 443,
+            "users": [
+              {
+                "id": "3ef61b7f-f5f5-4774-9759-aff86b88eeb9",
+                "encryption": "none",
+                "flow": ""
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "tcpSettings": {},
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "eh.vk.com",
+          "publicKey": "Mkxs9LT0tRg208EbLXmP-_dQYlsPOgaTwZ3acwgVVWs",
+          "fingerprint": "edge"
+        }
+      },
+      "mux": {
+        "enabled": true,
+        "concurrency": 8,
+        "xudpConcurrency": 8,
+        "xudpProxyUDP443": "reject"
+      }
+    },
+    {
+      "tag": "wlvk-7-2",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "89.208.229.238",
+            "port": 443,
+            "users": [
+              {
+                "id": "3ef61b7f-f5f5-4774-9759-aff86b88eeb9",
+                "encryption": "none",
+                "flow": ""
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "tcpSettings": {},
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "ads.x5.ru",
+          "publicKey": "Mkxs9LT0tRg208EbLXmP-_dQYlsPOgaTwZ3acwgVVWs",
+          "fingerprint": "edge"
+        }
+      },
+      "mux": {
+        "enabled": true,
+        "concurrency": 8,
+        "xudpConcurrency": 8,
+        "xudpProxyUDP443": "reject"
+      }
+    },
+    {
+      "tag": "wlvk-7-3",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "89.208.229.238",
+            "port": 443,
+            "users": [
+              {
+                "id": "3ef61b7f-f5f5-4774-9759-aff86b88eeb9",
+                "encryption": "none",
+                "flow": ""
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "tcpSettings": {},
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "api-maps.yandex.ru",
+          "publicKey": "Mkxs9LT0tRg208EbLXmP-_dQYlsPOgaTwZ3acwgVVWs",
+          "fingerprint": "edge"
+        }
+      },
+      "mux": {
+        "enabled": true,
+        "concurrency": 8,
+        "xudpConcurrency": 8,
+        "xudpProxyUDP443": "reject"
+      }
+    },
+    {
+      "tag": "LOOP-VK",
+      "protocol": "loopback",
+      "settings": {
+        "inboundTag": "VK-REROUTE"
+      }
+    },
+    {
+      "tag": "direct",
+      "protocol": "freedom",
+      "settings": {
+        "domainStrategy": "UseIPv4"
+      }
+    },
+    {
+      "tag": "block",
+      "protocol": "blackhole"
+    }
+  ],
+  "burstObservatory": {
+    "pingConfig": {
+      "timeout": "10s",
+      "interval": "5m",
+      "sampling": 3,
+      "httpMethod": "GET",
+      "destination": "https://2gis.ru/public/promo2gisAwards/pin-silver.png",
+      "connectivity": "https://max.ru/favicon.png"
+    },
+    "subjectSelector": [
+      "direct",
+      "norway",
+      "russia",
+      "wlvk"
+    ]
+  },
+  "remarks": "🇪🇺 #4 LTE - Универсальный"
+}
